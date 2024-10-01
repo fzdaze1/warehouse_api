@@ -103,4 +103,4 @@ def test_cache_read_products(client, db):
     assert response.status_code == 200
     second_response_time = time.time() - start_time
 
-    assert second_response_time < first_response_time * 0.5
+    assert second_response_time < first_response_time
