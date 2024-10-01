@@ -1,3 +1,6 @@
+import time
+
+
 def test_create_product(client, db):
     product_data = {
         "name": "New Product",
@@ -76,3 +79,28 @@ def test_delete_product(client, db):
 
     response = client.get(f"api/v1/products/{product['id']}")
     assert response.status_code == 404
+
+
+def test_cache_read_products(client, db):
+    product_data = {
+        "name": "Cache Product",
+        "description": "Product for caching test",
+        "price": 40.0,
+        "stock": 20
+    }
+    response = client.post("api/v1/products", json=product_data)
+    assert response.status_code == 200
+
+    start_time = time.time()
+    response = client.get("api/v1/products")
+    assert response.status_code == 200
+    first_response_time = time.time() - start_time
+
+    assert first_response_time > 0
+
+    start_time = time.time()
+    response = client.get("api/v1/products")
+    assert response.status_code == 200
+    second_response_time = time.time() - start_time
+
+    assert second_response_time < first_response_time * 0.5

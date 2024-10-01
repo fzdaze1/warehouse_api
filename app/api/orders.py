@@ -3,6 +3,8 @@ from sqlalchemy.orm import Session
 from .. import schemas, crud
 from ..database import SessionLocal
 from ..dependencies import get_db
+from fastapi_cache.decorator import cache
+from fastapi_cache import FastAPICache
 
 from typing import List
 
@@ -19,11 +21,12 @@ def create_order(order: schemas.OrderCreate, db: Session = Depends(get_db)):
         if product.stock < item.quantity:
             raise HTTPException(
                 status_code=400, detail=f"Not enough stock for product {product.id}")
-
+    FastAPICache.clear()
     return crud.create_order(db, order)
 
 
 @router.get("/orders", response_model=List[schemas.Order])
+@cache(expire=60)
 def read_orders(skip: int = 0, limit: int = 10, db: Session = Depends(get_db)):
     return crud.get_orders(db, skip=skip, limit=limit)
 
@@ -41,7 +44,7 @@ def update_order_status(order_id: int, status: schemas.OrderStatusUpdate, db: Se
     db_order = crud.get_order(db, order_id)
     if db_order is None:
         raise HTTPException(status_code=404, detail="Order not found")
-
+    FastAPICache.clear()
     return crud.update_order_status(db, order_id, status)
 
 
@@ -51,4 +54,5 @@ def delete_order(order_id: int, db: Session = Depends(get_db)):
     if db_order is None:
         raise HTTPException(status_code=404, detail="Order not found")
     crud.delete_order(db, order_id)
+    FastAPICache.clear()
     return {"message": "Order deleted successfully"}
