@@ -17,3 +17,4 @@
    ```
    docker compose exec web python -m pytest
    ```
+Документация http://localhost:8000/docs
