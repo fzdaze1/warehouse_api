@@ -45,7 +45,6 @@ def update_order_status(order_id: int, status: schemas.OrderStatusUpdate, db: Se
     return crud.update_order_status(db, order_id, status)
 
 
-# Удаление заказа
 @router.delete("/orders/{order_id}")
 def delete_order(order_id: int, db: Session = Depends(get_db)):
     db_order = crud.get_order(db, order_id)

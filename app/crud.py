@@ -38,7 +38,7 @@ def delete_product(db: Session, product_id: int):
 
 
 def create_order(db: Session, order: schemas.OrderCreate):
-    db_order = models.Order(status="в процессе")
+    db_order = models.Order(status="in_process")
     db.add(db_order)
     db.commit()
     db.refresh(db_order)
@@ -70,7 +70,7 @@ def get_order(db: Session, order_id: int):
 def update_order_status(db: Session, order_id: int, status: schemas.OrderStatusUpdate):
     db_order = db.query(models.Order).filter(
         models.Order.id == order_id).first()
-    db_order.status = status.status
+    db_order.status = status.status.value
     db.commit()
     db.refresh(db_order)
     return db_order

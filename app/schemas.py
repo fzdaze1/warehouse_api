@@ -1,6 +1,13 @@
 from pydantic import BaseModel, ConfigDict
 from typing import List, Optional
 from datetime import datetime
+from enum import Enum
+
+
+class OrderStatus(Enum):
+    IN_PROCESS = 'in_process'
+    SHIPPING = 'shipping'
+    DELIVERED = 'delivered'
 
 
 class ProductBase(BaseModel):
@@ -37,7 +44,7 @@ class OrderItem(OrderItemBase):
 
 
 class OrderBase(BaseModel):
-    status: Optional[str] = 'in process'
+    status: OrderStatus = OrderStatus.IN_PROCESS
 
 
 class OrderCreate(OrderBase):
@@ -84,4 +91,4 @@ class Order(OrderBase):
 
 
 class OrderStatusUpdate(BaseModel):
-    status: str
+    status: OrderStatus

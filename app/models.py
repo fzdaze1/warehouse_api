@@ -1,8 +1,15 @@
-from sqlalchemy import Column, Integer, String, Float, ForeignKey, DateTime
+from sqlalchemy import Column, Integer, String, Float, ForeignKey, DateTime, Enum as SqlEnum
 from sqlalchemy.orm import relationship
 from sqlalchemy.sql import func
+from enum import Enum as PyEnum
 
 from .database import Base
+
+
+class OrderStatus(str, PyEnum):
+    IN_PROCESS = 'in_process'
+    SHIPPING = 'shipping'
+    DELIVERED = 'delivered'
 
 
 class Product(Base):
@@ -20,7 +27,8 @@ class Order(Base):
 
     id = Column(Integer, primary_key=True, index=True)
     created_at = Column(DateTime(timezone=True), server_default=func.now())
-    status = Column(String, default='in process')
+    status = Column(SqlEnum(OrderStatus, values_callable=lambda obj: [e.value for e in obj]),
+                    default='in_process', nullable=False)
 
     items = relationship("OrderItem", back_populates="order")
 
