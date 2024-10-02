@@ -13,7 +13,7 @@
    docker compose up -d --build
    ```
 
-4) Провести тесты при желании можно с помощью pytest(файл с тестами в директории app/rental/tests.py
+4) Провести тесты при желании можно с помощью pytest
    ```
    docker compose exec web python -m pytest
    ```
